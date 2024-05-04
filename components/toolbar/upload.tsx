@@ -26,10 +26,15 @@ import {
   DialogTrigger,
 } from '#/components/ui/dialog';
 
+import { useFileManager } from '../file-manager/context';
+
 function UploadModal() {
   const searchParam = useSearchParams();
+  const { refetch } = useFileManager();
   const fileRef = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [isUploading, setIsUploading] =
+    useState(false);
   const [file, setFile] = useState<File | null>(
     null,
   );
@@ -44,6 +49,8 @@ function UploadModal() {
     form.append('file', file as Blob);
     form.append('path', path);
 
+    setIsUploading(true);
+
     fetch('/api/upload', {
       method: 'POST',
       body: form,
@@ -53,10 +60,12 @@ function UploadModal() {
     })
       .then((res) => res.json())
       .then((res) => {
+        setIsUploading(false);
         if (res.ok) {
           toast.success('File uploaded');
           setFile(null);
           setIsOpen(false);
+          refetch();
         }
       });
   }
@@ -164,7 +173,10 @@ function UploadModal() {
 
           <DialogFooter>
             {file && (
-              <Button onClick={handleSubmit}>
+              <Button
+                onClick={handleSubmit}
+                isLoading={isUploading}
+              >
                 Submit
               </Button>
             )}
