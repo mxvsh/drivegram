@@ -6,11 +6,14 @@ import {
   Edit2Icon,
   ExternalLinkIcon,
   FileIcon,
+  ImageIcon,
   InfoIcon,
+  TextIcon,
   TrashIcon,
+  VideoIcon,
 } from 'lucide-react';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { File } from '@prisma/client';
 
@@ -25,6 +28,14 @@ import {
   ContextMenuTrigger,
 } from '#/components/ui/context-menu';
 
+const icons: Record<string, React.ElementType> = {
+  default: FileIcon,
+  image: ImageIcon,
+  video: VideoIcon,
+  pdf: TextIcon,
+  text: TextIcon,
+};
+
 function FileItem({
   file,
   onSelect,
@@ -36,6 +47,15 @@ function FileItem({
 }) {
   const [isRightClicked, setIsRightClicked] =
     useState(false);
+
+  const Icon = useMemo(() => {
+    console.log('file.filetype', file.filetype);
+    const iconKeys = Object.keys(icons);
+    const type = iconKeys.find((key) =>
+      file.filetype.match(key),
+    );
+    return icons[type ?? 'default'];
+  }, [file]);
 
   return (
     <ContextMenu
@@ -61,7 +81,7 @@ function FileItem({
             onSelect?.();
           }}
         >
-          <FileIcon size={30} />
+          <Icon size={32} />
 
           <h1 className="line-clamp-2 text-center">
             {file.filename}
