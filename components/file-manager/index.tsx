@@ -51,7 +51,13 @@ function FileManager() {
             <span>No items found</span>
           </div>
         ) : (
-          <div className="grid h-full flex-1 grid-cols-4 content-start justify-evenly gap-1 overflow-auto p-2 lg:grid-cols-6 2xl:grid-cols-8">
+          <div
+            className="grid h-full flex-1 grid-cols-4 content-start justify-evenly gap-1 overflow-auto p-2 lg:grid-cols-6 2xl:grid-cols-8"
+            onClick={() => {
+              setSelectedFile(null);
+              setSelectedFolder(null);
+            }}
+          >
             {folders.map((folder) => (
               <FolderItem
                 key={folder.id}

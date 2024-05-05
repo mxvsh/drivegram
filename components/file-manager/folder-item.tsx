@@ -59,10 +59,12 @@ function FolderItem({
                 ? 'bg-gray-100'
                 : 'bg-transparent hover:bg-gray-50'
           }`}
-          onClick={() => {
+          onClick={(ev) => {
+            ev.stopPropagation();
             onSelect?.();
           }}
-          onDoubleClick={() => {
+          onDoubleClick={(ev) => {
+            ev.stopPropagation();
             onDoubleClick?.();
           }}
         >

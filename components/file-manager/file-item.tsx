@@ -76,7 +76,8 @@ function FileItem({
                   ? 'bg-gray-100'
                   : 'bg-transparent hover:bg-gray-50'
             }`}
-          onClick={() => {
+          onClick={(ev) => {
+            ev.stopPropagation();
             onSelect?.();
           }}
         >
