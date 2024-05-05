@@ -9,21 +9,21 @@ DriveGram is a personal cloud storage application that uses Telegram as a drive.
 
 ## Features
 
-- Upload files to Telegram
-- Download files from Telegram
-- Create folders/files
-- Bookmark files
-- Trash files
+- 📁 Organize files/folders
+- 📤 Upload/Download files
+- 🔖 Bookmark files
+- 🗑️ Trash files
 
 ## Planned Features
 
-- Share files
-- Search files
-- File preview
-- File encryption
-- File compression
-- Link Google Drive
-- Generate shareable link
+- [ ] Share files
+- [ ] Search files
+- [ ] File preview
+- [ ] File encryption
+- [ ] File compression
+- [ ] Link Google Drive
+- [ ] Generate shareable link
+- [ ] Custom chat for files
 
 ## Installation
 
