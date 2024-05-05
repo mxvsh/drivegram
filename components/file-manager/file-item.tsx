@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  CodeSquareIcon,
   CopyIcon,
   DownloadIcon,
   Edit2Icon,
@@ -36,6 +37,7 @@ const icons: Record<string, React.ElementType> = {
   video: VideoIcon,
   pdf: TextIcon,
   text: TextIcon,
+  application: CodeSquareIcon,
 };
 
 function FileItem({
