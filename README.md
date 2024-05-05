@@ -1,11 +1,12 @@
-# drivegram
+# DriveGram - Cloud Drive based on Telegram
 
-> [!WARNING]
+> [!NOTE]
 > This project is still under development.
 
 DriveGram is a personal cloud storage application that uses Telegram as a drive.
 
-![image](https://github.com/mxvsh/drivegram/assets/31907722/1706e7f1-9a8e-4ec2-8eb0-3c7d1c136090)
+![Group 2](https://github.com/mxvsh/drivegram/assets/31907722/0590e2d3-641a-4b50-8020-a909182d22ad)
+
 
 ## Features
 
