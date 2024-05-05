@@ -23,6 +23,7 @@
     "big-integer": "^1.6.52",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "commander": "^12.0.0",
     "envalid": "^8.0.0",
     "framer-motion": "^11.1.7",
     "lucide-react": "^0.378.0",
