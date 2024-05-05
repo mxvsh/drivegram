@@ -5,7 +5,6 @@ import { getClient } from '#/lib/client';
 import prisma from '#/prisma';
 
 export async function POST(req: Request) {
-  const client = await getClient();
   const form = await req.formData();
 
   const file = form.get('file') as File;
@@ -15,6 +14,12 @@ export async function POST(req: Request) {
     'accountId',
   ) as string;
 
+  if (!accountId) {
+    return Response.json({
+      error: 'No account ID provided',
+    });
+  }
+
   const toUpload = new CustomFile(
     file.name,
     file.size,
@@ -22,6 +27,8 @@ export async function POST(req: Request) {
     Buffer.from(buffer),
   );
 
+  console.log('accountId', accountId);
+  const client = await getClient(accountId);
   const res = await client.sendFile('me', {
     file: toUpload,
     forceDocument: true,

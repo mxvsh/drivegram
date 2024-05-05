@@ -6,11 +6,14 @@ import prisma from '#/prisma';
 import { env } from './env';
 
 let client: TelegramClient | null = null;
-export async function getClient() {
+export async function getClient(
+  accountId: string,
+) {
   if (client) return client;
 
-  const account =
-    await prisma.account.findFirst();
+  const account = await prisma.account.findFirst({
+    where: { id: accountId },
+  });
 
   if (!account)
     throw new Error('No account found');

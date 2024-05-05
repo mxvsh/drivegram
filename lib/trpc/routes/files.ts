@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { getClient } from '#/lib/client';
 import prisma from '#/prisma';
 
 import { procedure } from '../trpc';
@@ -109,6 +110,81 @@ export const moveToTrash = procedure
       data: {
         isDeleted: true,
         deletedAt: new Date(),
+      },
+    });
+  });
+
+export const restore = procedure
+  .input(
+    z.object({
+      id: z.number(),
+      type: z.enum(['file', 'folder']),
+    }),
+  )
+  .mutation(async ({ input }) => {
+    if (input.type === 'file') {
+      return prisma.file.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          isDeleted: false,
+          deletedAt: null,
+        },
+      });
+    }
+
+    return prisma.folder.update({
+      where: {
+        id: input.id,
+      },
+      data: {
+        isDeleted: false,
+        deletedAt: null,
+      },
+    });
+  });
+
+export const deleteFile = procedure
+  .input(z.number())
+  .mutation(async ({ input }) => {
+    const file = await prisma.file.findFirst({
+      where: {
+        id: input,
+      },
+    });
+
+    if (!file || !file.accountId) return null;
+
+    const client = await getClient(
+      file.accountId,
+    );
+
+    try {
+      await client.deleteMessages(
+        'me',
+        [parseInt(file.messageId)],
+        {
+          revoke: true,
+        },
+      );
+    } catch {
+      console.error('Failed to delete message');
+    }
+
+    return prisma.file.delete({
+      where: {
+        id: input,
+      },
+    });
+  });
+
+export const deleteFolder = procedure
+  .input(z.number())
+  .mutation(async ({ input }) => {
+    return prisma.folder.delete({
+      where: {
+        id: input,
       },
     });
   });

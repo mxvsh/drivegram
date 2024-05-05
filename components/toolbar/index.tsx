@@ -2,23 +2,30 @@
 
 import {
   BookmarkIcon,
-  CopyIcon,
   DownloadIcon,
   EditIcon,
   FilePlusIcon,
-  MoveIcon,
   TrashIcon,
 } from 'lucide-react';
 
 import { Button } from '#/components/ui/button';
+
+import { trpc } from '#/lib/trpc/client';
 
 import { useFileManager } from '../file-manager/context';
 import Folder from './folder';
 import UploadModal from './upload';
 
 function Toolbar() {
-  const { selectedFile, selectedFolder } =
-    useFileManager();
+  const deleteFile =
+    trpc.deleteFile.useMutation();
+
+  const {
+    selectedFile,
+    selectedFolder,
+    setSelectedFile,
+    refetch,
+  } = useFileManager();
 
   const isSelected = Boolean(
     selectedFile || selectedFolder,
@@ -68,6 +75,17 @@ function Toolbar() {
         variant="ghost"
         size="sm"
         disabled={!isSelected}
+        isLoading={deleteFile.isLoading}
+        onClick={() => {
+          if (selectedFile) {
+            deleteFile
+              .mutateAsync(selectedFile.id)
+              .then(() => {
+                refetch();
+                setSelectedFile(null);
+              });
+          }
+        }}
       >
         Delete
       </Button>
