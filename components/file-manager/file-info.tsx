@@ -5,6 +5,8 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { useParams } from 'next/navigation';
+
 import { File } from '@prisma/client';
 
 import { Button } from '../ui/button';
@@ -17,11 +19,15 @@ function FileInfo({
   file: File;
   onClose: () => void;
 }) {
+  const params = useParams();
+  const accountId = params.accId as string;
+
   function handleDownload() {
     fetch(`/api/download`, {
       method: 'POST',
       body: JSON.stringify({
         messageId: file.messageId,
+        accountId: accountId,
       }),
       headers: {
         ContentType: 'application/json',

@@ -11,7 +11,8 @@ export async function POST(
   req: NextRequest,
   res: NextApiResponse,
 ) {
-  const { messageId } = await req.json();
+  const { messageId, accountId } =
+    await req.json();
 
   const file = await prisma.file.findFirst({
     where: {
@@ -25,7 +26,7 @@ export async function POST(
     });
   }
 
-  const client = await getClient();
+  const client = await getClient(accountId);
   const result = await client.getMessages('me', {
     ids: parseInt(messageId),
   });
