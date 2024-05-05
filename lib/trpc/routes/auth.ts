@@ -59,7 +59,7 @@ async function setupCient(phoneNumber: string) {
         id: me.id.toString(),
         name: me.firstName!,
         session,
-        me,
+        meJSON: JSON.stringify(me),
         picture: '',
       },
     });
