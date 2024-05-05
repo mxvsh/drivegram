@@ -34,6 +34,8 @@ Right now, you can run the project locally by following the steps below.
 
 ### Environment Variables
 
+Create a `.env.local` file in the root directory and add the following environment variables.
+
 ```bash
 # Telegram
 TELEGRAM_API_ID=
