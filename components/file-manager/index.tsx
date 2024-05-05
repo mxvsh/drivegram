@@ -52,7 +52,7 @@ function FileManager() {
           </div>
         ) : (
           <div
-            className="grid h-full flex-1 grid-cols-4 content-start justify-evenly gap-1 overflow-auto p-2 lg:grid-cols-6 2xl:grid-cols-8"
+            className="grid h-full flex-1 grid-cols-3 content-start justify-evenly gap-1 overflow-auto p-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
             onClick={() => {
               setSelectedFile(null);
               setSelectedFolder(null);
