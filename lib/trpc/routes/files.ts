@@ -52,6 +52,9 @@ export const getFiles = procedure
         folderPath: input.path ?? '/',
         isDeleted: false,
       },
+      orderBy: {
+        filename: 'asc',
+      },
     });
   });
 
@@ -187,4 +190,28 @@ export const deleteFolder = procedure
         id: input,
       },
     });
+  });
+
+export const toggleBookmarkFile = procedure
+  .input(z.number())
+  .mutation(async ({ input }) => {
+    const file = await prisma.file.findFirst({
+      where: {
+        id: input,
+      },
+      select: { isBookmarked: true },
+    });
+
+    if (!file) return false;
+
+    await prisma.file.update({
+      where: {
+        id: input,
+      },
+      data: {
+        isBookmarked: !file.isBookmarked,
+      },
+    });
+
+    return !file.isBookmarked;
   });

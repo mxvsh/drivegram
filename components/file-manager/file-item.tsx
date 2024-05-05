@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  BookmarkIcon,
   CodeSquareIcon,
   CopyIcon,
   DownloadIcon,
@@ -65,12 +66,14 @@ function FileItem({
       onOpenChange={(isOpen) => {
         if (isOpen) {
           setIsRightClicked(true);
+        } else {
+          setIsRightClicked(false);
         }
       }}
     >
       <ContextMenuTrigger>
         <div
-          className={`flex h-28 select-none flex-col items-center justify-center gap-3 rounded-lg px-2
+          className={`relative flex h-28 select-none flex-col items-center justify-center gap-3 rounded-lg px-2
             ${
               isSelected
                 ? 'bg-gray-100'
@@ -88,6 +91,13 @@ function FileItem({
           <h1 className="line-clamp-2 text-center">
             {file.filename}
           </h1>
+
+          {file.isBookmarked && (
+            <BookmarkIcon
+              className="absolute right-2 top-2 fill-primary text-primary"
+              size={15}
+            />
+          )}
         </div>
       </ContextMenuTrigger>
       <ContextMenuContent className="w-64">

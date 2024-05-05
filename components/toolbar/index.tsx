@@ -8,6 +8,8 @@ import {
   TrashIcon,
 } from 'lucide-react';
 
+import { useEffect, useState } from 'react';
+
 import { Button } from '#/components/ui/button';
 
 import { trpc } from '#/lib/trpc/client';
@@ -17,6 +19,8 @@ import Folder from './folder';
 import UploadModal from './upload';
 
 function Toolbar() {
+  const toggleBookmarkFile =
+    trpc.toggleBookmarkFile.useMutation();
   const deleteFile =
     trpc.deleteFile.useMutation();
 
@@ -30,6 +34,17 @@ function Toolbar() {
   const isSelected = Boolean(
     selectedFile || selectedFolder,
   );
+
+  const [isBookmarked, setIsBookmarked] =
+    useState(false);
+
+  useEffect(() => {
+    if (selectedFile) {
+      setIsBookmarked(selectedFile.isBookmarked);
+    } else {
+      setIsBookmarked(false);
+    }
+  }, [selectedFile]);
 
   return (
     <div className="flex select-none items-center border-b p-1">
@@ -51,8 +66,19 @@ function Toolbar() {
         variant="ghost"
         size="sm"
         disabled={!isSelected}
+        isLoading={toggleBookmarkFile.isLoading}
+        onClick={() => {
+          if (selectedFile) {
+            toggleBookmarkFile
+              .mutateAsync(selectedFile.id)
+              .then((res) => {
+                refetch();
+                setIsBookmarked(res);
+              });
+          }
+        }}
       >
-        Bookmark
+        {isBookmarked ? 'Unbookmark' : 'Bookmark'}
       </Button>
       <Button
         icon={<DownloadIcon size={18} />}
