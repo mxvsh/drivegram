@@ -28,6 +28,8 @@ import {
   ContextMenuTrigger,
 } from '#/components/ui/context-menu';
 
+import MoveToTrash from './move-to-trash';
+
 const icons: Record<string, React.ElementType> = {
   default: FileIcon,
   image: ImageIcon,
@@ -49,7 +51,6 @@ function FileItem({
     useState(false);
 
   const Icon = useMemo(() => {
-    console.log('file.filetype', file.filetype);
     const iconKeys = Object.keys(icons);
     const type = iconKeys.find((key) =>
       file.filetype.match(key),
@@ -62,8 +63,6 @@ function FileItem({
       onOpenChange={(isOpen) => {
         if (isOpen) {
           setIsRightClicked(true);
-        } else {
-          setIsRightClicked(false);
         }
       }}
     >
@@ -97,10 +96,22 @@ function FileItem({
           <DownloadIcon size={16} />
           Download
         </ContextMenuItem>
-        <ContextMenuItem className="gap-2">
-          <TrashIcon size={16} />
-          Move to Trash
-        </ContextMenuItem>
+        <MoveToTrash
+          fileId={file.id}
+          onSuccess={() =>
+            setIsRightClicked(false)
+          }
+        >
+          <ContextMenuItem
+            className="gap-2"
+            onClick={(ev) => {
+              ev.preventDefault();
+            }}
+          >
+            <TrashIcon size={16} />
+            Move to Trash
+          </ContextMenuItem>
+        </MoveToTrash>
         <ContextMenuItem className="gap-2">
           <InfoIcon size={16} />
           File Information

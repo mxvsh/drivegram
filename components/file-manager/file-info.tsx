@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { File } from '@prisma/client';
 
 import { Button } from '../ui/button';
+import MoveToTrash from './move-to-trash';
 
 function FileInfo({
   file,
@@ -106,14 +107,19 @@ function FileInfo({
         >
           Download
         </Button>
-        <Button
-          icon={<TrashIcon size={20} />}
-          variant="outline"
-          size="sm"
-          className="w-full"
+        <MoveToTrash
+          fileId={file.id}
+          onSuccess={onClose}
         >
-          Move to Trash
-        </Button>
+          <Button
+            icon={<TrashIcon size={20} />}
+            variant="outline"
+            size="sm"
+            className="w-full"
+          >
+            Move to Trash
+          </Button>
+        </MoveToTrash>
       </div>
     </div>
   );

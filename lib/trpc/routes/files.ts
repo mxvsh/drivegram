@@ -14,6 +14,7 @@ export const getFolders = procedure
     return prisma.folder.findMany({
       where: {
         parentPath: input.path ?? '/',
+        isDeleted: false,
       },
     });
   });
@@ -42,6 +43,7 @@ export const getFiles = procedure
     return prisma.file.findMany({
       where: {
         folderPath: input.path ?? '/',
+        isDeleted: false,
       },
     });
   });

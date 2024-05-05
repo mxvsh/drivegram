@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.13.0",
+    "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-context-menu": "^2.1.5",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.0.2",

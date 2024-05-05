@@ -29,6 +29,7 @@ function Toolbar() {
         icon={<FilePlusIcon size={18} />}
         variant="ghost"
         size="sm"
+        disabled
       >
         Add File
       </Button>
