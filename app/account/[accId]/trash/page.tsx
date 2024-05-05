@@ -2,12 +2,22 @@ import ListItems from '#/components/list-items';
 
 import prisma from '#/prisma';
 
-async function Page() {
+async function Page({
+  params,
+}: {
+  params: { accId: string };
+}) {
   const files = await prisma.file.findMany({
-    where: { isDeleted: true },
+    where: {
+      isDeleted: true,
+      accountId: params.accId,
+    },
   });
   const folders = await prisma.folder.findMany({
-    where: { isDeleted: true },
+    where: {
+      isDeleted: true,
+      accountId: params.accId,
+    },
   });
 
   return (

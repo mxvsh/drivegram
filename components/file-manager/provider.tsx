@@ -2,7 +2,10 @@
 
 import { useState } from 'react';
 
-import { useSearchParams } from 'next/navigation';
+import {
+  useParams,
+  useSearchParams,
+} from 'next/navigation';
 
 import { File, Folder } from '@prisma/client';
 
@@ -15,8 +18,11 @@ export const FileManagerProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const params = useParams();
   const searchParams = useSearchParams();
   const path = searchParams.get('path') ?? '/';
+
+  const accountId = params.accId as string;
 
   const [selectedFile, setSelectedFile] =
     useState<File | null>(null);
@@ -29,6 +35,7 @@ export const FileManagerProvider = ({
   } = trpc.getFolderDetails.useQuery(
     {
       folderPath: path,
+      accountId,
     },
     {
       enabled: path !== '/',
@@ -41,6 +48,7 @@ export const FileManagerProvider = ({
     refetch: refetchFolders,
   } = trpc.getFolders.useQuery({
     path,
+    accountId,
   });
 
   const {
@@ -49,6 +57,7 @@ export const FileManagerProvider = ({
     refetch: refetchFiles,
   } = trpc.getFiles.useQuery({
     path,
+    accountId,
   });
 
   return (

@@ -11,6 +11,10 @@ export async function POST(req: Request) {
   const file = form.get('file') as File;
   const buffer = await file.arrayBuffer();
 
+  const accountId = form.get(
+    'accountId',
+  ) as string;
+
   const toUpload = new CustomFile(
     file.name,
     file.size,
@@ -36,6 +40,7 @@ export async function POST(req: Request) {
       chatId,
       messageId: msgId,
       fileId: res.id.toString(),
+      accountId,
     },
   });
 

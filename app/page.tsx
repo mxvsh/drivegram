@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 
-import SignInForm from '#/components/sign-in';
+import AddAccount from '#/components/add-account';
 
 import prisma from '#/prisma';
 
@@ -10,7 +10,7 @@ async function Home() {
   if (accounts.length === 0)
     return (
       <div className="flex h-screen items-center justify-center">
-        <SignInForm />
+        <AddAccount />
       </div>
     );
 

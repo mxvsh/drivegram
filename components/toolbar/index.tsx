@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  BookmarkIcon,
   CopyIcon,
   DownloadIcon,
   EditIcon,
@@ -39,20 +40,12 @@ function Toolbar() {
       <UploadModal />
       <div className="mx-2 h-6 w-0.5 border-l" />
       <Button
-        icon={<CopyIcon size={18} />}
+        icon={<BookmarkIcon size={18} />}
         variant="ghost"
         size="sm"
         disabled={!isSelected}
       >
-        Copy
-      </Button>
-      <Button
-        icon={<MoveIcon size={18} />}
-        variant="ghost"
-        size="sm"
-        disabled={!isSelected}
-      >
-        Move
+        Bookmark
       </Button>
       <Button
         icon={<DownloadIcon size={18} />}

@@ -13,7 +13,10 @@ import {
   useState,
 } from 'react';
 
-import { useSearchParams } from 'next/navigation';
+import {
+  useParams,
+  useSearchParams,
+} from 'next/navigation';
 
 import { Button } from '#/components/ui/button';
 import {
@@ -29,6 +32,7 @@ import {
 import { useFileManager } from '../file-manager/context';
 
 function UploadModal() {
+  const params = useParams();
   const searchParam = useSearchParams();
   const { refetch } = useFileManager();
   const fileRef = useRef<HTMLInputElement>(null);
@@ -48,6 +52,10 @@ function UploadModal() {
 
     form.append('file', file as Blob);
     form.append('path', path);
+    form.append(
+      'accountId',
+      params.accId as string,
+    );
 
     setIsUploading(true);
 

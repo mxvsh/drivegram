@@ -18,7 +18,7 @@ import {
 } from './ui/card';
 import { Input } from './ui/input';
 
-function SignInForm() {
+function AddAccount() {
   const generateOtp =
     trpc.generateOtp.useMutation();
   const verifyOtp = trpc.verifyOtp.useMutation();
@@ -91,7 +91,7 @@ function SignInForm() {
         <CardFooter>
           <Button
             onClick={() => {
-              window.location.reload();
+              window.location.href = '/';
             }}
           >
             Continue
@@ -105,10 +105,10 @@ function SignInForm() {
     <Card className="w-[400px]">
       <CardHeader>
         <CardTitle className="text-xl">
-          Sign In
+          Add Account
         </CardTitle>
         <CardDescription>
-          Sign in to your account to continue
+          Enter your phone number to add account
         </CardDescription>
       </CardHeader>
 
@@ -131,7 +131,7 @@ function SignInForm() {
       ) : (
         <CardContent>
           <Input
-            defaultValue={''}
+            type="password"
             placeholder="Password"
             ref={refs.password}
           />
@@ -169,4 +169,4 @@ function SignInForm() {
   );
 }
 
-export default SignInForm;
+export default AddAccount;

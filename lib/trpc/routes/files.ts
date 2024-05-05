@@ -7,6 +7,7 @@ import { procedure } from '../trpc';
 export const getFolders = procedure
   .input(
     z.object({
+      accountId: z.string(),
       path: z.string().optional(),
     }),
   )
@@ -15,6 +16,7 @@ export const getFolders = procedure
       where: {
         parentPath: input.path ?? '/',
         isDeleted: false,
+        accountId: input.accountId,
       },
     });
   });
@@ -22,12 +24,14 @@ export const getFolders = procedure
 export const getFolderDetails = procedure
   .input(
     z.object({
+      accountId: z.string(),
       folderPath: z.string().optional(),
     }),
   )
   .query(async ({ input }) => {
     return prisma.folder.findFirst({
       where: {
+        accountId: input.accountId,
         path: input.folderPath,
       },
     });
@@ -36,12 +40,14 @@ export const getFolderDetails = procedure
 export const getFiles = procedure
   .input(
     z.object({
+      accountId: z.string(),
       path: z.string().optional(),
     }),
   )
   .query(async ({ input }) => {
     return prisma.file.findMany({
       where: {
+        accountId: input.accountId,
         folderPath: input.path ?? '/',
         isDeleted: false,
       },
@@ -52,6 +58,7 @@ export const createFolder = procedure
   .input(
     z.object({
       name: z.string(),
+      accountId: z.string(),
       path: z.string().optional(),
     }),
   )
@@ -63,6 +70,7 @@ export const createFolder = procedure
     });
     return prisma.folder.create({
       data: {
+        accountId: input.accountId,
         name: input.name,
         parentId: parent?.id ?? null,
         path:

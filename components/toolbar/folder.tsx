@@ -5,7 +5,10 @@ import { toast } from 'sonner';
 
 import { useRef, useState } from 'react';
 
-import { useSearchParams } from 'next/navigation';
+import {
+  useParams,
+  useSearchParams,
+} from 'next/navigation';
 
 import { Button } from '#/components/ui/button';
 import {
@@ -24,6 +27,7 @@ import { trpc } from '#/lib/trpc/client';
 import { useFileManager } from '../file-manager/context';
 
 function FolderModal() {
+  const params = useParams();
   const searchParam = useSearchParams();
   const { refetch } = useFileManager();
   const [isOpen, setIsOpen] = useState(false);
@@ -39,9 +43,12 @@ function FolderModal() {
       return;
     }
 
+    const accountId = params.accId as string;
+
     createFolder
       .mutateAsync({
         name,
+        accountId,
         path: path ?? undefined,
       })
       .then(() => {
