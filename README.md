@@ -28,30 +28,22 @@ Run on your local machine without any external dependencies. You just need to cr
 
 ## 🚀 Installation
 
-Right now, you can run the project locally by following the steps below.
+Right now, you can run the project locally by following the steps below. It uses SQLite as a database.
 
 > [!NOTE]
 > Docker file and docker-compose file will be added soon.
 
 ### Environment Variables
 
-Create a `.env.local` file in the root directory and add the following environment variables.
+Create a `.env` (or copy `.env.example`) file in the root directory and add the following environment variables. DriveGram uses SQLite as a database.
 
 ```bash
 # Telegram
 TELEGRAM_API_ID=
 TELEGRAM_API_HASH=
+
 # Database
-DATABASE_URL=file:./drivegram.sqlite
-```
-
-If you want to use a different database, you can change the provider in the `schema.prisma` file, and use the `DATABASE_URL` environment variable.
-
-```prisma
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
+DATABASE_URL=file:./db.sqlite
 ```
 
 ### Run Production Server
@@ -59,7 +51,7 @@ datasource db {
 ```bash
 git clone git@github.com:mxvsh/drivegram.git
 cd drivegram
-bun install
-bun run build
-bun start
+pnpm install
+pnpm run build
+pnpm start
 ```
