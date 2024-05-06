@@ -1,9 +1,8 @@
-# DriveGram - Cloud Drive based on Telegram
+# ☁️ DriveGram - Personal Cloud Storage
 
-> [!NOTE]
-> This project is still under development.
+DriveGram is a personal cloud storage application that uses Telegram as a drive. It allows you to upload, download, and organize your files using the Telegram API. The project is built using [Next.js](https://nextjs.org) and [Gramjs](https://gram.js.org).
 
-DriveGram is a personal cloud storage application that uses Telegram as a drive.
+✨ The project is actively under development, expect frequent updates and new features.
 
 ![Group 2](https://github.com/mxvsh/drivegram/assets/31907722/0590e2d3-641a-4b50-8020-a909182d22ad)
 
@@ -30,28 +29,47 @@ Run on your local machine without any external dependencies. You just need to cr
 
 Right now, you can run the project locally by following the steps below. It uses SQLite as a database.
 
-> [!NOTE]
-> Docker file and docker-compose file will be added soon.
+### Docker
 
-### Environment Variables
-
-Create a `.env` (or copy `.env.example`) file in the root directory and add the following environment variables. DriveGram uses SQLite as a database.
+Use the following commands to run the project using Docker.
 
 ```bash
-# Telegram
-TELEGRAM_API_ID=
-TELEGRAM_API_HASH=
-
-# Database
-DATABASE_URL=file:./db.sqlite
+docker run -d -p 3000:3000 \
+  -e TELEGRAM_API_ID='' \
+  -e TELEGRAM_API_HASH='' monawwar/drivegram:latest
 ```
 
-### Run Production Server
+### Local Server
+
+To run the project locally, follow the steps below.
+
+1. Clone the repository and install the dependencies.
 
 ```bash
 git clone git@github.com:mxvsh/drivegram.git
+```
+
+2. Install the dependencies and start the server.
+
+```bash
 cd drivegram
 pnpm install
+```
+
+3. Create a `.env` (or copy `.env.example`) file in the root directory and add the following environment variables.
+
+```env
+TELEGRAM_API_ID=
+TELEGRAM_API_HASH=
+```
+
+4. Build and start the server.
+
+```bash
 pnpm run build
 pnpm start
 ```
+
+### 🙂 Thanks
+
+Contact me on [Telegram](https://t.me/monawwarx) for any queries or suggestions.
