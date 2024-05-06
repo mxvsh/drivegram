@@ -1,23 +1,22 @@
+import { unstable_noStore as notStore } from 'next/cache';
 import Image from 'next/image';
 
 import AddAccount from '#/lib/components/accounts/add';
 import AccountPicker from '#/lib/components/accounts/picker';
+import { env } from '#/lib/env';
 import logo from '#/lib/logo.svg';
 import { getAccounts } from '#/lib/services/accounts';
 
 async function Home() {
+  notStore();
   const accounts = await getAccounts();
 
-  if (accounts.length === 0)
+  if (accounts.length === 0) {
     return (
       <div className="relative flex h-screen items-center justify-center bg-muted/50">
         <AddAccount
-          apiId={parseInt(
-            process.env.TELEGRAM_API_ID ?? '',
-          )}
-          apiHash={
-            process.env.TELEGRAM_API_HASH ?? ''
-          }
+          apiId={env.TELEGRAM_API_ID}
+          apiHash={env.TELEGRAM_API_HASH}
         />
         <div className="absolute left-0 top-0 z-10 flex h-[45%] w-full flex-col items-center justify-center gap-2 bg-primary">
           <Image
@@ -37,6 +36,7 @@ async function Home() {
         </div>
       </div>
     );
+  }
 
   return (
     <div className="flex h-screen items-center justify-center bg-muted/50">

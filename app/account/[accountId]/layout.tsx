@@ -1,3 +1,5 @@
+import { unstable_noStore as notStore } from 'next/cache';
+
 import ClientProvider from '#/lib/client/provider';
 import Header from '#/lib/components/common/header';
 import Sidebar from '#/lib/components/common/sidebar';
@@ -17,6 +19,7 @@ async function Layout({
     accountId: string;
   };
 }) {
+  notStore();
   const account = await getSingleAccount({
     id: params.accountId,
   });
