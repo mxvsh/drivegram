@@ -25,6 +25,7 @@ function ClientProvider({
   const [relogin, setRelogin] = useState(false);
 
   useEffect(() => {
+    let hasError = false;
     const id = toast.loading(
       'Connecting to Telegram',
     );
@@ -36,6 +37,7 @@ function ClientProvider({
     );
     _.connect()
       .catch((err) => {
+        hasError = true;
         const error = err as Error;
         if (
           error.message.includes(
@@ -43,13 +45,15 @@ function ClientProvider({
           )
         ) {
           _.disconnect();
-          setRelogin(true);
+          // setRelogin(true);
+          toast.dismiss(id);
           toast.warning(
             'The session is invalid. Please re-login.',
           );
         }
       })
       .then(() => {
+        if (hasError) return;
         setClient(_);
         toast.dismiss(id);
         toast.success('Connected');

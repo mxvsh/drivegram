@@ -131,3 +131,27 @@ export function getTrashFiles(accountId: string) {
     },
   });
 }
+
+export async function getFileStats(
+  accountId: string,
+) {
+  const files = await db.query.files.findMany({
+    where(fields, operators) {
+      return operators.eq(
+        fields.accountId,
+        accountId,
+      );
+    },
+    columns: {
+      size: true,
+    },
+  });
+
+  const totalSize: number = files
+    .map((file) => file.size)
+    .reduce((acc, size) => acc + size, 0);
+  return {
+    totalFiles: files.length,
+    totalSize,
+  };
+}

@@ -3,6 +3,7 @@ import {
   TrashIcon,
   XIcon,
 } from 'lucide-react';
+import prettyBytes from 'pretty-bytes';
 import { toast } from 'sonner';
 
 import { useTelegramClient } from '#/lib/client/context';
@@ -79,7 +80,7 @@ function FileInfo({
               File Size
             </h1>
             <span className="mt-1 font-semibold">
-              {(file.size / 1024).toFixed(2)} KB
+              {prettyBytes(file.size)}
             </span>
           </div>
           <div>

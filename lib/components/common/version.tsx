@@ -2,9 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { Card } from '../ui/card';
-
-function VersionCard() {
+function VersionChecker() {
   const version = process.env.version;
   const [latestVersion, setLatestVersion] =
     useState('');
@@ -50,19 +48,14 @@ function VersionCard() {
 
   return (
     <div>
-      <Card className="p-4">
-        <h1 className="font-semibold">
-          v{version}
-        </h1>
-        <p className="text-sm text-gray-500">
-          {latestVersion &&
-          latestVersion !== version
-            ? `New version available`
-            : 'Up to date'}
-        </p>
-      </Card>
+      <p className="text-sm text-gray-500">
+        {latestVersion &&
+        latestVersion !== version
+          ? `New version available`
+          : 'Up to date'}
+      </p>
     </div>
   );
 }
 
-export default VersionCard;
+export default VersionChecker;

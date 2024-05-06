@@ -3,14 +3,11 @@
 import { motion } from 'framer-motion';
 import {
   BookmarkIcon,
-  ChevronLeft,
-  ChevronRight,
   HomeIcon,
   SettingsIcon,
   TrashIcon,
 } from 'lucide-react';
-
-import { useState } from 'react';
+import prettyBytes from 'pretty-bytes';
 
 import Link from 'next/link';
 import {
@@ -18,9 +15,9 @@ import {
   usePathname,
 } from 'next/navigation';
 
-import { Button } from '#/lib/components/ui/button';
-
-import VersionCard from './version';
+import { Card } from '../ui/card';
+import FileStats from './file-stats';
+import VersionChecker from './version';
 
 const options = [
   {
@@ -45,15 +42,20 @@ const options = [
   },
 ];
 
-function Sidebar() {
+function Sidebar({
+  stats,
+}: {
+  stats?: {
+    totalFiles: number;
+    totalSize: number;
+  };
+}) {
   const params = useParams();
   const pathname = usePathname();
-  const [collapsed, setCollapsed] =
-    useState(false);
 
   return (
     <div
-      className={`relative h-full ${!collapsed && 'w-60'} space-y-4 px-2 pt-2`}
+      className={`relative h-full w-60 space-y-4 px-2 pt-2`}
     >
       <div className="space-y-1">
         {options.map((option) => {
@@ -78,30 +80,20 @@ function Sidebar() {
                 draggable="false"
               >
                 <option.icon size={20} />
-                {!collapsed && (
-                  <span>{option.title}</span>
-                )}
+                <span>{option.title}</span>
               </Link>
             </motion.div>
           );
         })}
       </div>
 
-      {!collapsed && <VersionCard />}
+      <FileStats
+        totalFiles={stats?.totalFiles || 0}
+        totalSize={stats?.totalSize || 0}
+      />
 
-      <div className="absolute bottom-2 right-2">
-        <Button
-          variant="outline"
-          icon={
-            collapsed ? (
-              <ChevronRight size={20} />
-            ) : (
-              <ChevronLeft size={20} />
-            )
-          }
-          size={'xs'}
-          onClick={() => setCollapsed(!collapsed)}
-        />
+      <div className="absolute bottom-0 w-full py-2 text-center">
+        <VersionChecker />
       </div>
     </div>
   );

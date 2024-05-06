@@ -73,30 +73,39 @@ function AddAccount({
         setClient(_client);
     }
     setLoading(true);
-    await _client.start({
-      phoneNumber,
-      phoneCode: async () => {
-        setStep(2);
-        setLoading(false);
-        return new Promise((resolve) => {
-          resolvers.set('phoneCode', resolve);
-        });
-      },
-      password: async () => {
-        setStep(3);
-        setLoading(false);
-        if (refs.otp.current) {
-          refs.otp.current.value = '';
-        }
-        return new Promise((resolve) => {
-          resolvers.set('password', resolve);
-        });
-      },
-      onError: (err) => {
-        setLoading(false);
+
+    try {
+      await _client.start({
+        phoneNumber,
+        phoneCode: async () => {
+          setStep(2);
+          setLoading(false);
+          return new Promise((resolve) => {
+            resolvers.set('phoneCode', resolve);
+          });
+        },
+        password: async () => {
+          setStep(3);
+          setLoading(false);
+          if (refs.otp.current) {
+            refs.otp.current.value = '';
+          }
+          return new Promise((resolve) => {
+            resolvers.set('password', resolve);
+          });
+        },
+        onError: (err) => {
+          setLoading(false);
+          toast.error(err.message);
+        },
+      });
+    } catch (err) {
+      setLoading(false);
+      if (err instanceof Error) {
         toast.error(err.message);
-      },
-    });
+      } else toast.error('Failed to send OTP');
+      return;
+    }
 
     try {
       setLoading(false);

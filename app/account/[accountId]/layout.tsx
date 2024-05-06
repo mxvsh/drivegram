@@ -1,5 +1,3 @@
-import getConfig from 'next/config';
-
 import ClientProvider from '#/lib/client/provider';
 import Header from '#/lib/components/common/header';
 import Sidebar from '#/lib/components/common/sidebar';
@@ -8,6 +6,7 @@ import {
   getAccounts,
   getSingleAccount,
 } from '#/lib/services/accounts';
+import { getFileStats } from '#/lib/services/files';
 
 async function Layout({
   children,
@@ -18,7 +17,6 @@ async function Layout({
     accountId: string;
   };
 }) {
-  const { publicRuntimeConfig } = getConfig();
   const account = await getSingleAccount({
     id: params.accountId,
   });
@@ -32,6 +30,9 @@ async function Layout({
   }
 
   const accounts = await getAccounts();
+  const fileStats = await getFileStats(
+    account.id,
+  );
 
   return (
     <ClientProvider
@@ -46,7 +47,7 @@ async function Layout({
         />
         <div className="flex flex-1 overflow-auto">
           <div className="space-y-4 border-r bg-muted">
-            <Sidebar />
+            <Sidebar stats={fileStats} />
           </div>
           <div className="flex-1">{children}</div>
         </div>
