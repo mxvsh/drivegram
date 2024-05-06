@@ -8,6 +8,8 @@ DriveGram is a personal cloud storage application that uses Telegram as a drive.
 
 Run on your local machine without any external dependencies. You just need to create a Telegram application and get the API ID and API Hash from [my.telegram.org](https://my.telegram.org).
 
+It uses SQLite as a database to store user data and files. You can run the project using Docker or on your local machine.
+
 ## Features
 
 - ✨ Clean UI
