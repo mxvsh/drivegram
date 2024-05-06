@@ -1,18 +1,19 @@
 import type { Metadata } from 'next';
-import { Montserrat } from 'next/font/google';
+import { Poppins } from 'next/font/google';
 
-import Providers from '#/components/providers';
+import GlobalProvider from '#/lib/providers/global';
 
 import './globals.css';
 
-const montserrat = Montserrat({
+const poppins = Poppins({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
 });
 
 export const metadata: Metadata = {
   title: 'drivegram',
-  description: 'File management for Telegram',
+  description:
+    'Personal cloud storage for Telegram',
 };
 
 export default function RootLayout({
@@ -22,8 +23,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${montserrat.className}`}>
-        <Providers>{children}</Providers>
+      <body className={`${poppins.className}`}>
+        <GlobalProvider>
+          {children}
+        </GlobalProvider>
       </body>
     </html>
   );
