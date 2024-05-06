@@ -1,6 +1,6 @@
 node_modules/
 README.md
-.env.*
+.env*
 Dockerfile
 *.sqlite
 .next
