@@ -5,11 +5,16 @@ import prisma from '#/prisma';
 
 import { env } from './env';
 
-let client: TelegramClient | null = null;
+let clients = new Map<string, TelegramClient>();
+
 export async function getClient(
   accountId: string,
 ) {
-  if (client) return client;
+  if (clients.has(accountId)) {
+    return clients.get(
+      accountId,
+    ) as TelegramClient;
+  }
 
   const account = await prisma.account.findFirst({
     where: { id: accountId },
@@ -18,10 +23,10 @@ export async function getClient(
   if (!account)
     throw new Error('No account found');
 
-  client = new TelegramClient(
+  const client = new TelegramClient(
     new StringSession(account.session),
-    env.TELEGRAM_API_ID,
-    env.TELEGRAM_API_HASH,
+    env.NEXT_PUBLIC_TELEGRAM_API_ID,
+    env.NEXT_PUBLIC_TELEGRAM_API_HASH,
     {
       connectionRetries: 5,
     },
@@ -31,5 +36,7 @@ export async function getClient(
     phoneCode: async () => '',
     phoneNumber: '',
   });
+
+  clients.set(accountId, client);
   return client;
 }

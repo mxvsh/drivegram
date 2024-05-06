@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["linux-musl-arm64-openssl-3.0.x", "linux-arm64-openssl-3.0.x", "darwin-arm64"]
 }
 
 datasource db {
@@ -8,11 +9,10 @@ datasource db {
 }
 
 model Account {
-  id      String @id @default(cuid())
+  id      String  @id @default(cuid())
   name    String
-  picture String
+  picture String?
   session String
-  meJSON  String
 
   files   File[]
   folders Folder[]

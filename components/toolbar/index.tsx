@@ -7,6 +7,7 @@ import {
   FilePlusIcon,
   TrashIcon,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { useEffect, useState } from 'react';
 
@@ -14,15 +15,20 @@ import { Button } from '#/components/ui/button';
 
 import { trpc } from '#/lib/trpc/client';
 
+import { useTelegramClient } from '../client/context';
 import { useFileManager } from '../file-manager/context';
 import Folder from './folder';
 import UploadModal from './upload';
 
 function Toolbar() {
+  const client = useTelegramClient();
   const toggleBookmarkFile =
     trpc.toggleBookmarkFile.useMutation();
   const deleteFile =
     trpc.deleteFile.useMutation();
+
+  const [isDeleting, setIsDeleting] =
+    useState(false);
 
   const {
     selectedFile,
@@ -100,15 +106,32 @@ function Toolbar() {
         icon={<TrashIcon size={18} />}
         variant="ghost"
         size="sm"
-        disabled={!isSelected}
-        isLoading={deleteFile.isLoading}
-        onClick={() => {
+        disabled={!isSelected || isDeleting}
+        isLoading={isDeleting}
+        onClick={async () => {
           if (selectedFile) {
-            deleteFile
-              .mutateAsync(selectedFile.id)
+            setIsDeleting(true);
+            client
+              .deleteMessages(
+                'me',
+                [
+                  parseInt(
+                    selectedFile.messageId,
+                  ),
+                ],
+                {
+                  revoke: true,
+                },
+              )
               .then(() => {
-                refetch();
-                setSelectedFile(null);
+                deleteFile
+                  .mutateAsync(selectedFile.id)
+                  .then(() => {
+                    refetch();
+                    setSelectedFile(null);
+                    toast.success('File deleted');
+                    setIsDeleting(false);
+                  });
               });
           }
         }}
