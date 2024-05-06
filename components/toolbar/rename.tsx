@@ -59,6 +59,7 @@ function RenameModal({
       .then(() => {
         setIsOpen(false);
         refetch();
+        toast.success('Renamed successfully');
       });
   }
   return (
