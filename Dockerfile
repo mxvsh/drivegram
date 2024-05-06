@@ -26,11 +26,10 @@ COPY --from=build /app/public public
 COPY --from=build /app/package.json package.json
 COPY --from=prod-deps /app/node_modules node_modules
 COPY --from=build /app/database.sqlite database.sqlite
-COPY --from=build /app/server.js server.js
 
 ENV NODE_ENV=production
 ENV DATABASE_URL=file:./database.sqlite
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+CMD ["npm", "start"]
 
