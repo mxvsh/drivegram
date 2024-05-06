@@ -32,4 +32,4 @@ jobs:
           context: .
           platforms: ${{ matrix.platform }}
           push: true
-          tags: user/app:latest
+          tags: monawwar/drivegram:latest
