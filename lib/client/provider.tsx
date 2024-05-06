@@ -7,9 +7,6 @@ import { StringSession } from 'telegram/sessions';
 import { useEffect, useState } from 'react';
 
 import AddAccount from '../components/accounts/add';
-import ItemLoader from '../components/common/item-loader';
-import Spinner from '../components/common/spinner';
-import { Skeleton } from '../components/ui/skeleton';
 import { clientContext } from './context';
 
 function ClientProvider({
@@ -62,7 +59,10 @@ function ClientProvider({
   if (relogin) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <AddAccount />
+        <AddAccount
+          apiId={apiId}
+          apiHash={apiHash}
+        />
       </div>
     );
   }

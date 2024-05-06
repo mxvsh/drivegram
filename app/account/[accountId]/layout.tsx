@@ -33,8 +33,8 @@ async function Layout({
   return (
     <ClientProvider
       session={account.session}
-      apiId={env.NEXT_PUBLIC_TELEGRAM_API_ID}
-      apiHash={env.NEXT_PUBLIC_TELEGRAM_API_HASH}
+      apiId={env.TELEGRAM_API_ID}
+      apiHash={env.TELEGRAM_API_HASH}
     >
       <div className="flex h-screen flex-col overflow-hidden">
         <Header
@@ -42,7 +42,7 @@ async function Layout({
           accounts={accounts}
         />
         <div className="flex flex-1 overflow-auto">
-          <div className="bg-muted space-y-4 border-r">
+          <div className="space-y-4 border-r bg-muted">
             <Sidebar />
           </div>
           <div className="flex-1">{children}</div>

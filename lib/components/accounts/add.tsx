@@ -6,6 +6,7 @@ import { StringSession } from 'telegram/sessions';
 
 import { useRef, useState } from 'react';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { trpc } from '#/lib/trpc/client';
@@ -23,7 +24,13 @@ import { Input } from '../ui/input';
 
 let resolvers = new Map<string, Function>();
 
-function AddAccount() {
+function AddAccount({
+  apiId,
+  apiHash,
+}: {
+  apiId: number;
+  apiHash: string;
+}) {
   const r = useRouter();
   const saveSession =
     trpc.saveAccountSession.useMutation();
@@ -55,13 +62,9 @@ function AddAccount() {
 
     let _client = client;
     if (!_client) {
-      const apiId =
-        process.env.NEXT_PUBLIC_TELEGRAM_API_ID;
-      const apiHash = process.env
-        .NEXT_PUBLIC_TELEGRAM_API_HASH as string;
       (_client = new TelegramClient(
         new StringSession(''),
-        Number(apiId),
+        apiId,
         apiHash,
         {
           connectionRetries: 5,
@@ -151,9 +154,6 @@ function AddAccount() {
           session,
         })
         .then(() => {
-          toast.success(
-            'Account added successfully',
-          );
           r.push(`/account/${user.id}`);
         });
     }
@@ -185,7 +185,7 @@ function AddAccount() {
   }
 
   return (
-    <Card className="w-[400px]">
+    <Card className="z-20 w-[400px]">
       <CardHeader>
         <CardTitle className="text-xl">
           Add Account
