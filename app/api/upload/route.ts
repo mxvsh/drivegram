@@ -27,7 +27,6 @@ export async function POST(req: Request) {
     Buffer.from(buffer),
   );
 
-  console.log('accountId', accountId);
   const client = await getClient(accountId);
   const res = await client.sendFile('me', {
     file: toUpload,

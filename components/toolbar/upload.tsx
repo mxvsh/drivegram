@@ -6,6 +6,8 @@ import {
   XIcon,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { Api } from 'telegram';
+import { CustomFile } from 'telegram/client/uploads';
 
 import {
   useEffect,
@@ -29,12 +31,22 @@ import {
   DialogTrigger,
 } from '#/components/ui/dialog';
 
+import { trpc } from '#/lib/trpc/client';
+
+import { useTelegramClient } from '../client/context';
 import { useFileManager } from '../file-manager/context';
+import { Progress } from '../ui/progress';
 
 function UploadModal() {
   const params = useParams();
+  const client = useTelegramClient();
   const searchParam = useSearchParams();
   const { refetch } = useFileManager();
+  const [progress, setProgress] = useState(0);
+
+  const createFile =
+    trpc.createFile.useMutation();
+
   const fileRef = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isUploading, setIsUploading] =
@@ -47,7 +59,11 @@ function UploadModal() {
 
   const path = searchParam.get('path') ?? '/';
 
-  function handleSubmit() {
+  async function handleSubmit() {
+    if (!file) {
+      toast.error('No file selected');
+      return;
+    }
     const form = new FormData();
 
     form.append('file', file as Blob);
@@ -59,22 +75,48 @@ function UploadModal() {
 
     setIsUploading(true);
 
-    fetch('/api/upload', {
-      method: 'POST',
-      body: form,
-      headers: {
-        ContentType: 'multipart/form-data',
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const toUpload = new CustomFile(
+      file.name,
+      file.size,
+      '',
+      // @ts-ignore
+      buffer,
+    );
+
+    const res = await client.sendFile('me', {
+      file: toUpload,
+      forceDocument: true,
+      workers: 10,
+      progressCallback: (progress) => {
+        setProgress(progress * 100);
       },
-    })
-      .then((res) => res.json())
-      .then((res) => {
+    });
+
+    const peer = res.peerId as Api.PeerUser;
+    const chatId = peer.userId
+      .valueOf()
+      .toString();
+    const msgId = res.id.toString();
+
+    await createFile
+      .mutateAsync({
+        path,
+        filename: file.name,
+        filetype: file.type,
+        size: file.size,
+        accountId: params.accId as string,
+        chatId,
+        messageId: msgId,
+        fileId: res.id.toString(),
+      })
+      .then(() => {
+        refetch();
+        setIsOpen(false);
+        setFile(null);
         setIsUploading(false);
-        if (res.ok) {
-          toast.success('File uploaded');
-          setFile(null);
-          setIsOpen(false);
-          refetch();
-        }
+        setProgress(0);
       });
   }
 
@@ -88,7 +130,10 @@ function UploadModal() {
     <div>
       <Dialog
         open={isOpen}
-        onOpenChange={setIsOpen}
+        onOpenChange={(val) => {
+          if (progress > 0) return;
+          setIsOpen(val);
+        }}
       >
         <DialogTrigger asChild>
           <Button
@@ -177,6 +222,10 @@ function UploadModal() {
                 </>
               )}
             </div>
+          )}
+
+          {progress > 0 && (
+            <Progress value={progress} />
           )}
 
           <DialogFooter>

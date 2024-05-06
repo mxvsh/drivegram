@@ -9,6 +9,7 @@ import { useParams } from 'next/navigation';
 
 import { File } from '@prisma/client';
 
+import { useTelegramClient } from '../client/context';
 import { Button } from '../ui/button';
 import MoveToTrash from './move-to-trash';
 
@@ -20,41 +21,60 @@ function FileInfo({
   onClose: () => void;
 }) {
   const params = useParams();
-  const accountId = params.accId as string;
+  const client = useTelegramClient();
 
-  function handleDownload() {
-    fetch(`/api/download`, {
-      method: 'POST',
-      body: JSON.stringify({
-        messageId: file.messageId,
-        accountId: accountId,
-      }),
-      headers: {
-        ContentType: 'application/json',
+  async function handleDownload() {
+    const loadingId = toast.loading(
+      'Downloading file',
+    );
+    const result = await client.getMessages(
+      'me',
+      {
+        ids: parseInt(file.messageId),
       },
-    })
-      .then((res) => res.blob())
-      .then((blob) => {
-        if (blob.type === 'application/json') {
-          return Promise.reject(blob);
-        }
+    );
+    if (result.length > 0) {
+      const message = result[0];
+      if (message === undefined) {
+        toast.dismiss(loadingId);
+        toast.error('Message not found');
+        return;
+      }
+
+      const buffer = await client.downloadMedia(
+        message,
+        {
+          progressCallback: (progress) => {
+            console.log('progress', progress);
+            // toast.message(
+            //   (progress * 100).toFixed(2),
+            //   {
+            //     id: loadingId,
+            //   },
+            // );
+          },
+        },
+      );
+
+      if (buffer) {
+        const blob = new Blob([buffer], {
+          type: file.filetype,
+        });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = url;
-        a.download = file.filename;
+        a.setAttribute('href', url);
+        a.setAttribute('download', file.filename);
+
         a.click();
         URL.revokeObjectURL(url);
-      })
-      .catch((errBlob) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const error = JSON.parse(
-            reader.result as string,
-          );
-          toast.error(error.error);
-        };
-        reader.readAsText(errBlob);
-      });
+
+        toast.dismiss(loadingId);
+        toast.success('File downloaded');
+      } else {
+        toast.dismiss(loadingId);
+        toast.error('Message not found');
+      }
+    }
   }
 
   return (

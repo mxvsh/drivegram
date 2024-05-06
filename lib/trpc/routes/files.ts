@@ -86,6 +86,34 @@ export const createFolder = procedure
     });
   });
 
+export const createFile = procedure
+  .input(
+    z.object({
+      filename: z.string(),
+      filetype: z.string(),
+      size: z.number(),
+      path: z.string(),
+      accountId: z.string(),
+      fileId: z.string(),
+      chatId: z.string(),
+      messageId: z.string(),
+    }),
+  )
+  .mutation(async ({ input }) => {
+    return prisma.file.create({
+      data: {
+        accountId: input.accountId,
+        filename: input.filename,
+        filetype: input.filetype,
+        folderPath: input.path,
+        chatId: input.chatId,
+        messageId: input.messageId,
+        fileId: input.fileId,
+        size: input.size,
+      },
+    });
+  });
+
 export const moveToTrash = procedure
   .input(
     z.object({
@@ -151,30 +179,6 @@ export const restore = procedure
 export const deleteFile = procedure
   .input(z.number())
   .mutation(async ({ input }) => {
-    const file = await prisma.file.findFirst({
-      where: {
-        id: input,
-      },
-    });
-
-    if (!file || !file.accountId) return null;
-
-    const client = await getClient(
-      file.accountId,
-    );
-
-    try {
-      await client.deleteMessages(
-        'me',
-        [parseInt(file.messageId)],
-        {
-          revoke: true,
-        },
-      );
-    } catch {
-      console.error('Failed to delete message');
-    }
-
     return prisma.file.delete({
       where: {
         id: input,

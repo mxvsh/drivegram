@@ -1,9 +1,12 @@
 'use client';
 
 import { toast } from 'sonner';
-import type { Api } from 'telegram';
+import { Api, TelegramClient } from 'telegram';
+import { StringSession } from 'telegram/sessions';
 
 import { useRef, useState } from 'react';
+
+import { useRouter } from 'next/navigation';
 
 import { trpc } from '#/lib/trpc/client';
 
@@ -18,12 +21,17 @@ import {
 } from './ui/card';
 import { Input } from './ui/input';
 
+let resolvers = new Map<string, Function>();
+
 function AddAccount() {
-  const generateOtp =
-    trpc.generateOtp.useMutation();
-  const verifyOtp = trpc.verifyOtp.useMutation();
-  const verifyPassword =
-    trpc.verifyPassword.useMutation();
+  const r = useRouter();
+  const saveSession =
+    trpc.saveSession.useMutation();
+
+  const [client, setClient] =
+    useState<TelegramClient | null>(null);
+
+  const [loading, setLoading] = useState(false);
 
   const [user, setUser] =
     useState<Partial<Api.User> | null>(null);
@@ -44,10 +52,56 @@ function AddAccount() {
       toast.error('Please fill all fields');
       return;
     }
-    await generateOtp.mutateAsync({
+
+    let _client = client;
+    if (!_client) {
+      const apiId =
+        process.env.NEXT_PUBLIC_TELEGRAM_API_ID;
+      const apiHash = process.env
+        .NEXT_PUBLIC_TELEGRAM_API_HASH as string;
+      (_client = new TelegramClient(
+        new StringSession(''),
+        Number(apiId),
+        apiHash,
+        {
+          connectionRetries: 5,
+        },
+      )),
+        setClient(_client);
+    }
+    setLoading(true);
+    await _client.start({
       phoneNumber,
+      phoneCode: async () => {
+        setStep(2);
+        setLoading(false);
+        return new Promise((resolve) => {
+          resolvers.set('phoneCode', resolve);
+        });
+      },
+      password: async () => {
+        setStep(3);
+        setLoading(false);
+        if (refs.otp.current) {
+          refs.otp.current.value = '';
+        }
+        return new Promise((resolve) => {
+          resolvers.set('password', resolve);
+        });
+      },
+      onError: (err) => {
+        setLoading(false);
+        toast.error(err.message);
+      },
     });
-    setStep(2);
+
+    try {
+      setLoading(false);
+      const user = await _client.getMe();
+      setUser(user);
+    } catch (e) {
+      console.log('final error', e);
+    }
   }
 
   async function handleVerifyOtp() {
@@ -59,22 +113,50 @@ function AddAccount() {
       return;
     }
 
-    await verifyOtp.mutateAsync(otp);
-    refs.otp.current.value = '';
-    setStep(3);
+    const otpResolver =
+      resolvers.get('phoneCode');
+    if (!otpResolver) return;
+
+    setLoading(true);
+    await otpResolver(otp);
   }
 
-  async function handleVerifyPassword() {
+  async function handleVerifyPassword(
+    skip?: boolean,
+  ) {
     const password = refs.password.current?.value;
 
-    if (!password) {
+    if (!password && !skip) {
       toast.error('Please enter password');
       return;
     }
 
-    const user =
-      await verifyPassword.mutateAsync(password);
-    setUser(user);
+    const passwordResolver =
+      resolvers.get('password');
+
+    if (!passwordResolver) return;
+
+    setLoading(true);
+    await passwordResolver(password);
+
+    try {
+    } catch (e) {}
+  }
+
+  async function handleSaveSession() {
+    if (client && user) {
+      setLoading(true);
+      const session = client.session.save() + '';
+      saveSession
+        .mutateAsync({
+          id: user.id?.toString()!,
+          name: user.firstName!,
+          session,
+        })
+        .then(() => {
+          r.push(`/account/${user.id}`);
+        });
+    }
   }
 
   if (user) {
@@ -90,8 +172,9 @@ function AddAccount() {
         </CardHeader>
         <CardFooter>
           <Button
+            isLoading={loading}
             onClick={() => {
-              window.location.href = '/';
+              handleSaveSession();
             }}
           >
             Continue
@@ -141,7 +224,7 @@ function AddAccount() {
         {step === 1 && (
           <Button
             onClick={handeSendOtp}
-            isLoading={generateOtp.isLoading}
+            isLoading={loading}
           >
             Send OTP
           </Button>
@@ -150,7 +233,7 @@ function AddAccount() {
         {step === 2 && (
           <Button
             onClick={handleVerifyOtp}
-            isLoading={verifyOtp.isLoading}
+            isLoading={loading}
           >
             Verify OTP
           </Button>
@@ -158,10 +241,12 @@ function AddAccount() {
 
         {step === 3 && (
           <Button
-            onClick={handleVerifyPassword}
-            isLoading={verifyPassword.isLoading}
+            onClick={() => {
+              handleVerifyPassword();
+            }}
+            isLoading={loading}
           >
-            Sign In
+            Continue
           </Button>
         )}
       </CardFooter>

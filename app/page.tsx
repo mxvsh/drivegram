@@ -1,5 +1,4 @@
-import { redirect } from 'next/navigation';
-
+import AccountPicker from '#/components/account-picker';
 import AddAccount from '#/components/add-account';
 
 import prisma from '#/prisma';
@@ -9,12 +8,16 @@ async function Home() {
     await prisma.account.findMany();
   if (accounts.length === 0)
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex h-screen items-center justify-center bg-muted/50">
         <AddAccount />
       </div>
     );
 
-  redirect(`/account/${accounts[0].id}`);
+  return (
+    <div className="flex h-screen items-center justify-center bg-muted/50">
+      <AccountPicker accounts={accounts} />
+    </div>
+  );
 }
 
 export default Home;
