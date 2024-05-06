@@ -6,7 +6,6 @@ settings:
 
 overrides:
   '@libsql/linux-x64-musl': 0.2.0
-  '@libsql/darwin-arm64': 0.2.0
 
 importers:
 
@@ -657,8 +656,8 @@ packages:
   '@libsql/core@0.6.0':
     resolution: {integrity: sha512-affAB8vSqQwqI9NBDJ5uJCVaHoOAS2pOpbv1kWConh1SBbmJBnHHd4KG73RAJ2sgd2+NbT9WA+XJBqxgp28YSw==}
 
-  '@libsql/darwin-arm64@0.2.0':
-    resolution: {integrity: sha512-+qyT2W/n5CFH1YZWv2mxW4Fsoo4dX9Z9M/nvbQqZ7H84J8hVegvVAsIGYzcK8xAeMEcpU5yGKB1Y9NoDY4hOSQ==}
+  '@libsql/darwin-arm64@0.3.18':
+    resolution: {integrity: sha512-Zt49dt+cwhPCkuoWgvjbQd4ckNfCJR5xzIAyhgHl3CBZqZaEuaXTOGKLNQT7bnFRPuQcdLt5PBT1cenKu2N6pA==}
     cpu: [arm64]
     os: [darwin]
 
@@ -4619,7 +4618,7 @@ snapshots:
     dependencies:
       js-base64: 3.7.7
 
-  '@libsql/darwin-arm64@0.2.0':
+  '@libsql/darwin-arm64@0.3.18':
     optional: true
 
   '@libsql/darwin-x64@0.3.18':
@@ -7039,7 +7038,7 @@ snapshots:
       '@neon-rs/load': 0.0.4
       detect-libc: 2.0.2
     optionalDependencies:
-      '@libsql/darwin-arm64': 0.2.0
+      '@libsql/darwin-arm64': 0.3.18
       '@libsql/darwin-x64': 0.3.18
       '@libsql/linux-arm64-gnu': 0.3.18
       '@libsql/linux-arm64-musl': 0.3.18
