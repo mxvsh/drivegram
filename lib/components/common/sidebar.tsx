@@ -20,6 +20,8 @@ import {
 
 import { Button } from '#/lib/components/ui/button';
 
+import VersionCard from './version';
+
 const options = [
   {
     title: 'Home',
@@ -51,37 +53,42 @@ function Sidebar() {
 
   return (
     <div
-      className={`relative h-full ${!collapsed && 'w-56'} space-y-1 px-2 pt-2`}
+      className={`relative h-full ${!collapsed && 'w-60'} space-y-4 px-2 pt-2`}
     >
-      {options.map((option) => {
-        const parsed = option.href.replace(
-          /\[([^\]]+)\]/g,
-          (_, key) => {
-            return params[key] as string;
-          },
-        );
-        const isActive = pathname === parsed;
+      <div className="space-y-1">
+        {options.map((option) => {
+          const parsed = option.href.replace(
+            /\[([^\]]+)\]/g,
+            (_, key) => {
+              return params[key] as string;
+            },
+          );
+          const isActive = pathname === parsed;
 
-        return (
-          <motion.div key={option.title}>
-            <Link
-              href={parsed}
-              className={`flex cursor-default items-center gap-2 rounded-lg px-4 py-2 ${
-                isActive
-                  ? // ? 'bg-gradient-to-l from-primary/80 to-primary text-white'
-                    'bg-primary font-semibold text-white'
-                  : ''
-              }`}
-              draggable="false"
-            >
-              <option.icon size={20} />
-              {!collapsed && (
-                <span>{option.title}</span>
-              )}
-            </Link>
-          </motion.div>
-        );
-      })}
+          return (
+            <motion.div key={option.title}>
+              <Link
+                href={parsed}
+                className={`flex cursor-default items-center gap-2 rounded-lg px-4 py-2 ${
+                  isActive
+                    ? // ? 'bg-gradient-to-l from-primary/80 to-primary text-white'
+                      'bg-primary font-semibold text-white'
+                    : ''
+                }`}
+                draggable="false"
+              >
+                <option.icon size={20} />
+                {!collapsed && (
+                  <span>{option.title}</span>
+                )}
+              </Link>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {!collapsed && <VersionCard />}
+
       <div className="absolute bottom-2 right-2">
         <Button
           variant="outline"

@@ -52,7 +52,7 @@ function ClientProvider({
       .then(() => {
         setClient(_);
         toast.dismiss(id);
-        toast.success('Connected to Telegram');
+        toast.success('Connected');
       });
   }, [apiHash, apiId, session]);
 
