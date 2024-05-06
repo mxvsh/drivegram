@@ -18,6 +18,7 @@ import { trpc } from '#/lib/trpc/client';
 import { useTelegramClient } from '../client/context';
 import { useFileManager } from '../file-manager/context';
 import Folder from './folder';
+import RenameModal from './rename';
 import UploadModal from './upload';
 
 function Toolbar() {
@@ -94,14 +95,11 @@ function Toolbar() {
       >
         Download
       </Button>
-      <Button
-        icon={<EditIcon size={18} />}
-        variant="ghost"
-        size="sm"
-        disabled={!isSelected}
-      >
-        Rename
-      </Button>
+
+      <RenameModal
+        isSelected={isSelected}
+        type={selectedFile ? 'file' : 'folder'}
+      />
       <Button
         icon={<TrashIcon size={18} />}
         variant="ghost"

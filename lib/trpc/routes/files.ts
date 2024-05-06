@@ -219,3 +219,33 @@ export const toggleBookmarkFile = procedure
 
     return !file.isBookmarked;
   });
+
+export const remaneFileOrFolder = procedure
+  .input(
+    z.object({
+      id: z.number(),
+      name: z.string(),
+      type: z.enum(['file', 'folder']),
+    }),
+  )
+  .mutation(async ({ input }) => {
+    if (input.type === 'folder') {
+      return prisma.folder.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          name: input.name,
+        },
+      });
+    }
+
+    return prisma.file.update({
+      where: {
+        id: input.id,
+      },
+      data: {
+        filename: input.name,
+      },
+    });
+  });
