@@ -69,6 +69,7 @@ TELEGRAM_API_HASH=
 
 ```bash
 pnpm run build
+pnpm drizzle-kit push:sqlite
 pnpm start
 ```
 
