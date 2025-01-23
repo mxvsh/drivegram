@@ -36,7 +36,7 @@
     "sonner": "^1.4.41",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
-    "telegram": "browser",
+    "telegram": "^2.26.16",
     "zod": "^3.23.6"
   },
   "devDependencies": {
@@ -46,6 +46,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "chalk": "^5.4.1",
     "drizzle-kit": "^0.20.17",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
