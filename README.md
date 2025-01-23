@@ -75,4 +75,4 @@ pnpm start
 
 ### 🙂 Thanks
 
-Contact me on [Telegram](https://t.me/monawwarx) for any queries or suggestions.
+Join our [Telegram group](https://t.me/+4PzId3lu99w3MTQ1) for any queries or suggestions.
