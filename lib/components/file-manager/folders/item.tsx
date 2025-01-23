@@ -9,7 +9,6 @@ import {
   InfoIcon,
   TrashIcon,
 } from 'lucide-react';
-
 import React, { useState } from 'react';
 
 import {

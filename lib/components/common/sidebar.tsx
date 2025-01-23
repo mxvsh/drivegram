@@ -7,13 +7,12 @@ import {
   SettingsIcon,
   TrashIcon,
 } from 'lucide-react';
-import prettyBytes from 'pretty-bytes';
-
 import Link from 'next/link';
 import {
   useParams,
   usePathname,
 } from 'next/navigation';
+import prettyBytes from 'pretty-bytes';
 
 import { Card } from '../ui/card';
 import FileStats from './file-stats';

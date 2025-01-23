@@ -5,20 +5,18 @@ import {
   UploadIcon,
   XIcon,
 } from 'lucide-react';
-import { toast } from 'sonner';
-import { Api } from 'telegram';
-import { CustomFile } from 'telegram/client/uploads';
-
+import {
+  useParams,
+  useSearchParams,
+} from 'next/navigation';
 import {
   useEffect,
   useRef,
   useState,
 } from 'react';
-
-import {
-  useParams,
-  useSearchParams,
-} from 'next/navigation';
+import { toast } from 'sonner';
+import { Api } from 'telegram';
+import { CustomFile } from 'telegram/client/uploads';
 
 import { useTelegramClient } from '#/lib/client/context';
 import { Button } from '#/lib/components/ui/button';

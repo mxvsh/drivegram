@@ -1,6 +1,5 @@
-import React from 'react';
-
 import Link from 'next/link';
+import React from 'react';
 
 import { Button } from '#/lib/components/ui/button';
 import {
@@ -34,7 +33,7 @@ function AccountPicker({
             key={account.id}
             href={`/account/${account.id}`}
           >
-            <Card className="hover:bg-muted p-4">
+            <Card className="p-4 hover:bg-muted">
               <h1 className="font-semibold">
                 {account.name}
               </h1>

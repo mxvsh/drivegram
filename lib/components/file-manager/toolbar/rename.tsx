@@ -1,9 +1,8 @@
 'use client';
 
 import { EditIcon } from 'lucide-react';
-import { toast } from 'sonner';
-
 import { useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 import { Button } from '#/lib/components/ui/button';
 import {

@@ -1,13 +1,8 @@
 'use client';
 
-import { toast } from 'sonner';
-import { Api, TelegramClient } from 'telegram';
-import { StringSession } from 'telegram/sessions';
-
-import { useRef, useState } from 'react';
-
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 import { trpc } from '#/lib/trpc/client';
 
@@ -22,26 +17,21 @@ import {
 } from '../ui/card';
 import { Input } from '../ui/input';
 
-let resolvers = new Map<string, Function>();
-
-function AddAccount({
-  apiId,
-  apiHash,
-}: {
-  apiId: number;
-  apiHash: string;
-}) {
+function AddAccount() {
   const r = useRouter();
-  const saveSession =
-    trpc.saveAccountSession.useMutation();
 
-  const [client, setClient] =
-    useState<TelegramClient | null>(null);
+  const sendPhoneCode =
+    trpc.sendPhoneCode.useMutation();
 
-  const [loading, setLoading] = useState(false);
+  const verifyOtp = trpc.verifyOtp.useMutation();
 
-  const [user, setUser] =
-    useState<Partial<Api.User> | null>(null);
+  const verifyPass =
+    trpc.verifyPassword.useMutation();
+
+  const [user, setUser] = useState<{
+    id: string;
+    firstName: string;
+  } | null>(null);
 
   const [step, setStep] = useState(1);
 
@@ -56,64 +46,17 @@ function AddAccount({
       refs.phoneNumber.current?.value;
 
     if (!phoneNumber) {
-      toast.error('Please fill all fields');
+      toast.error('Please enter phone number');
       return;
     }
 
-    let _client = client;
-    if (!_client) {
-      (_client = new TelegramClient(
-        new StringSession(''),
-        apiId,
-        apiHash,
-        {
-          connectionRetries: 5,
-        },
-      )),
-        setClient(_client);
-    }
-    setLoading(true);
-
-    try {
-      await _client.start({
+    await sendPhoneCode
+      .mutateAsync({
         phoneNumber,
-        phoneCode: async () => {
-          setStep(2);
-          setLoading(false);
-          return new Promise((resolve) => {
-            resolvers.set('phoneCode', resolve);
-          });
-        },
-        password: async () => {
-          setStep(3);
-          setLoading(false);
-          if (refs.otp.current) {
-            refs.otp.current.value = '';
-          }
-          return new Promise((resolve) => {
-            resolvers.set('password', resolve);
-          });
-        },
-        onError: (err) => {
-          setLoading(false);
-          toast.error(err.message);
-        },
+      })
+      .then(() => {
+        setStep(2);
       });
-    } catch (err) {
-      setLoading(false);
-      if (err instanceof Error) {
-        toast.error(err.message);
-      } else toast.error('Failed to send OTP');
-      return;
-    }
-
-    try {
-      setLoading(false);
-      const user = await _client.getMe();
-      setUser(user);
-    } catch (e) {
-      toast.error('Failed to get user');
-    }
   }
 
   async function handleVerifyOtp() {
@@ -125,47 +68,57 @@ function AddAccount({
       return;
     }
 
-    const otpResolver =
-      resolvers.get('phoneCode');
-    if (!otpResolver) return;
+    await verifyOtp
+      .mutateAsync({
+        code: otp,
+      })
+      .then((res) => {
+        if (res.error) {
+          toast.error(res.error);
+          return;
+        }
 
-    setLoading(true);
-    await otpResolver(otp);
+        if (res.next === 'require_password') {
+          setStep(3);
+        } else {
+          if (res.id) {
+            setUser({
+              id: res.id,
+              firstName: res.firstName,
+            });
+          }
+        }
+      });
   }
 
-  async function handleVerifyPassword(
-    skip?: boolean,
-  ) {
+  async function handleVerifyPassword() {
     const password = refs.password.current?.value;
 
-    if (!password && !skip) {
+    if (!password) {
       toast.error('Please enter password');
       return;
     }
 
-    const passwordResolver =
-      resolvers.get('password');
-
-    if (!passwordResolver) return;
-
-    setLoading(true);
-    await passwordResolver(password);
+    await verifyPass
+      .mutateAsync({
+        password: password,
+      })
+      .then((res) => {
+        if (res.id) {
+          setUser({
+            id: res.id,
+            firstName: res.firstName,
+          });
+        } else {
+          toast.error(
+            res.error || 'An error occurred',
+          );
+        }
+      });
   }
 
   async function handleSaveSession() {
-    if (client && user) {
-      setLoading(true);
-      const session = client.session.save() + '';
-      saveSession
-        .mutateAsync({
-          accountId: user.id?.toString()!,
-          name: user.firstName!,
-          session,
-        })
-        .then(() => {
-          r.push(`/account/${user.id}`);
-        });
-    }
+    r.push(`/account/${user?.id}`);
   }
 
   if (user) {
@@ -181,7 +134,6 @@ function AddAccount({
         </CardHeader>
         <CardFooter>
           <Button
-            // isLoading={loading}
             onClick={() => {
               handleSaveSession();
             }}
@@ -233,7 +185,7 @@ function AddAccount({
         {step === 1 && (
           <Button
             onClick={handeSendOtp}
-            isLoading={loading}
+            isLoading={sendPhoneCode.isLoading}
           >
             Send OTP
           </Button>
@@ -242,7 +194,7 @@ function AddAccount({
         {step === 2 && (
           <Button
             onClick={handleVerifyOtp}
-            isLoading={loading}
+            isLoading={verifyOtp.isLoading}
           >
             Verify OTP
           </Button>
@@ -253,9 +205,9 @@ function AddAccount({
             onClick={() => {
               handleVerifyPassword();
             }}
-            isLoading={loading}
+            isLoading={verifyPass.isLoading}
           >
-            Continue
+            Verify Password
           </Button>
         )}
       </CardFooter>
