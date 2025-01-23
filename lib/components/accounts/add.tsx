@@ -1,10 +1,8 @@
 'use client';
 
-import { toast } from 'sonner';
-
-import { useRef, useState } from 'react';
-
 import { useRouter } from 'next/navigation';
+import { useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 import { trpc } from '#/lib/trpc/client';
 

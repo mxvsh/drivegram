@@ -14,7 +14,6 @@ import {
   TrashIcon,
   VideoIcon,
 } from 'lucide-react';
-
 import React, { useMemo, useState } from 'react';
 
 import {
@@ -91,7 +90,7 @@ function FileItem({
 
           {file.isBookmarked && (
             <BookmarkIcon
-              className="fill-primary text-primary absolute right-2 top-2"
+              className="absolute right-2 top-2 fill-primary text-primary"
               size={15}
             />
           )}

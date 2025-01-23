@@ -1,6 +1,5 @@
-import { TelegramClient } from 'telegram';
-
 import { createContext, useContext } from 'react';
+import { TelegramClient } from 'telegram';
 
 export const clientContext = createContext(
   {} as TelegramClient,

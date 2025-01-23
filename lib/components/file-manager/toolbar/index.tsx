@@ -6,11 +6,9 @@ import {
   FilePlusIcon,
   TrashIcon,
 } from 'lucide-react';
-import { toast } from 'sonner';
-
-import { useEffect, useState } from 'react';
-
 import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 import { useTelegramClient } from '#/lib/client/context';
 import { Button } from '#/lib/components/ui/button';

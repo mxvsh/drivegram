@@ -5,13 +5,9 @@
   "singleQuote": true,
   "semi": true,
   "importOrder": [
-    "^react.*",
-    "^next.*",
+    "^\\w+.*",
     "^@",
-    "^#/components/ui/(.*)$",
-    "^#/components/(.*)$",
     "^#/(.*)$",
-    "^#/lib/(.*)$",
     "^[./]"
   ],
   "importOrderSeparation": true,

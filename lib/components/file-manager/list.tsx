@@ -1,10 +1,8 @@
 'use client';
 
 import { AnimatePresence } from 'framer-motion';
-
-import React from 'react';
-
 import { useRouter } from 'next/navigation';
+import React from 'react';
 
 import { useFileManager } from '#/lib/file-manager';
 
@@ -99,7 +97,7 @@ function ListItems() {
           </div>
         )}
 
-        <div className="bg-muted h-full w-[25%] border-l">
+        <div className="h-full w-[25%] border-l bg-muted">
           {selectedFile ? (
             <FileInfo
               file={selectedFile}
