@@ -42,6 +42,8 @@ function UploadModal() {
   const searchParam = useSearchParams();
   const { refetch } = useFileManager();
   const [progress, setProgress] = useState(0);
+  const [currentFileIndex, setCurrentFileIndex] =
+    useState(0);
 
   const createFile =
     trpc.createFile.useMutation();
@@ -50,23 +52,14 @@ function UploadModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [isUploading, setIsUploading] =
     useState(false);
-  const [file, setFile] = useState<File | null>(
-    null,
-  );
+  const [files, setFiles] = useState<File[]>([]);
   const [isDragging, setIsDragging] =
     useState(false);
 
   const folderPath =
     searchParam.get('path') ?? '/';
 
-  async function handleSubmit() {
-    if (!file) {
-      toast.error('No file selected');
-      return;
-    }
-
-    setIsUploading(true);
-
+  async function uploadFile(file: File) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     const toUpload = new CustomFile(
@@ -92,31 +85,45 @@ function UploadModal() {
       .toString();
     const msgId = res.id.toString();
 
-    await createFile
-      .mutateAsync({
-        folderPath,
-        filename: file.name,
-        filetype: file.type,
-        size: file.size,
-        accountId: params.accountId as string,
-        chatId,
-        messageId: msgId,
-        fileId: res.id.toString(),
-      })
-      .then(() => {
-        refetch();
-        setIsOpen(false);
-        setFile(null);
-        setIsUploading(false);
-        setProgress(0);
-      });
+    await createFile.mutateAsync({
+      folderPath,
+      filename: file.name,
+      filetype: file.type,
+      size: file.size,
+      accountId: params.accountId as string,
+      chatId,
+      messageId: msgId,
+      fileId: res.id.toString(),
+    });
+  }
+
+  async function handleSubmit() {
+    if (files.length === 0) {
+      toast.error('No files selected');
+      return;
+    }
+
+    setIsUploading(true);
+
+    for (let i = 0; i < files.length; i++) {
+      setCurrentFileIndex(i);
+      setProgress(0);
+      await uploadFile(files[i]);
+    }
+
+    refetch();
+    setIsOpen(false);
+    setFiles([]);
+    setIsUploading(false);
+    setProgress(0);
+    setCurrentFileIndex(0);
   }
 
   useEffect(() => {
-    if (file) {
+    if (files.length > 0) {
       setIsDragging(false);
     }
-  }, [file]);
+  }, [files]);
 
   return (
     <div>
@@ -138,29 +145,50 @@ function UploadModal() {
         </DialogTrigger>
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>
-            <DialogTitle>Upload file</DialogTitle>
+            <DialogTitle>
+              Upload files
+            </DialogTitle>
             <DialogDescription>
-              Drag and drop a file or click to
+              Drag and drop files or click to
               upload
             </DialogDescription>
           </DialogHeader>
-          {file ? (
-            <div className="bg-muted flex items-center gap-2 rounded-xl border p-4">
-              <FileIcon
-                size={24}
-                className="flex-shrink-0"
-              />
-              <span className="break-all text-sm">
-                {file.name}
-              </span>
-              <div className="flex-1" />
-              <XIcon
-                size={16}
-                onClick={() => {
-                  setFile(null);
-                }}
-                className="flex-shrink-0"
-              />
+          {files.length > 0 ? (
+            <div className="flex flex-col gap-2">
+              {files.map((file, index) => (
+                <div
+                  key={file.name}
+                  className="flex items-center gap-2 rounded-xl border bg-muted p-4"
+                >
+                  <FileIcon
+                    size={24}
+                    className="flex-shrink-0"
+                  />
+                  <span className="break-all text-sm">
+                    {file.name}
+                  </span>
+                  {isUploading &&
+                    index ===
+                      currentFileIndex && (
+                      <Progress
+                        value={progress}
+                        className="w-20"
+                      />
+                    )}
+                  <div className="flex-1" />
+                  <XIcon
+                    size={16}
+                    onClick={() => {
+                      setFiles(
+                        files.filter(
+                          (_, i) => i !== index,
+                        ),
+                      );
+                    }}
+                    className="flex-shrink-0"
+                  />
+                </div>
+              ))}
             </div>
           ) : (
             <div
@@ -180,11 +208,13 @@ function UploadModal() {
               }}
               onDrop={(ev) => {
                 ev.preventDefault();
-                const files =
-                  ev.dataTransfer?.files;
-                if (files?.length) {
-                  setFile(files[0]);
-                }
+                const droppedFiles = Array.from(
+                  ev.dataTransfer?.files || [],
+                );
+                setFiles((prev) => [
+                  ...prev,
+                  ...droppedFiles,
+                ]);
               }}
               onDragOver={(ev) => {
                 ev.preventDefault();
@@ -193,13 +223,17 @@ function UploadModal() {
               <input
                 type="file"
                 className="hidden"
+                multiple
                 ref={fileRef}
                 onChange={(e) => {
-                  const file =
-                    e.target.files?.[0];
-                  if (file) {
-                    setFile(file);
-                  }
+                  const selectedFiles =
+                    Array.from(
+                      e.target.files || [],
+                    );
+                  setFiles((prev) => [
+                    ...prev,
+                    ...selectedFiles,
+                  ]);
                 }}
               />
               {isDragging ? (
@@ -208,7 +242,7 @@ function UploadModal() {
                 <>
                   <FileIcon size={32} />
                   <span className="text-sm">
-                    Drag and drop a file or click
+                    Drag and drop files or click
                     to upload
                   </span>
                 </>
@@ -216,17 +250,14 @@ function UploadModal() {
             </div>
           )}
 
-          {progress > 0 && (
-            <Progress value={progress} />
-          )}
-
           <DialogFooter>
-            {file && (
+            {files.length > 0 && (
               <Button
                 onClick={handleSubmit}
                 isLoading={isUploading}
               >
-                Submit
+                Upload {files.length} file
+                {files.length > 1 ? 's' : ''}
               </Button>
             )}
           </DialogFooter>
