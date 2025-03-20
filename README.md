@@ -1,3 +1,7 @@
+> [!CAUTION]  
+> This project is discontinued. Please checkout https://github.com/drivebase/drivebase.
+
+
 # ☁️ DriveGram - Personal Cloud Storage
 
 DriveGram is a personal cloud storage application that uses Telegram as a drive. It allows you to upload, download, and organize your files using the Telegram API. The project is built using [Next.js](https://nextjs.org) and [Gramjs](https://gram.js.org).
